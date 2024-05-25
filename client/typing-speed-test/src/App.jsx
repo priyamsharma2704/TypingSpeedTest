@@ -4,7 +4,16 @@ import './App.css'
 function App()
 {
     const[quote,setQuote] = useState("");
+    const[timer,setTimer] = useState(0);
+    const[cpm,setCpm] = useState(0);
+
+    let currenTimer;
     let charIndex = 0;
+    const maxTime = 60;
+    let timeLeft = maxTime;
+    let isTyping = false;
+    let mistakes = 0;
+
     async function getQuote()
     {
         const resp = await fetch('https://api.quotable.io/random');
@@ -19,18 +28,56 @@ function App()
         var quotesArray = quote.split("");
         var typedChar = e.target.value.split("")[charIndex];
         let charElement = document.querySelectorAll('[id=id_char]');
-        if(typedChar == quotesArray[charIndex])
+
+        if(!isTyping)
         {
-            console.log("correct");
-            charElement[charIndex].classList.add("correct");
-            charElement[charIndex].classList.remove("incorrect");
+            currenTimer = setInterval(initTimer, 1000);
+            isTyping = true;
         }
-        else{
-            console.log("incorrect");
-            charElement[charIndex].classList.add("incorrect");
-            charElement[charIndex].classList.remove("correct");
+
+        if(typedChar == null)
+        {
+            charIndex--;
+            charElement[charIndex].classList.remove("correct", "incorrect");
         }
-        charIndex++;
+        else 
+        {
+            if(typedChar == quotesArray[charIndex])
+            {
+                console.log("correct");
+                charElement[charIndex].classList.add("correct");
+                charElement[charIndex].classList.remove("incorrect");
+            }
+            else
+            {
+                mistakes++;
+                console.log("incorrect");
+                charElement[charIndex].classList.add("incorrect");
+                charElement[charIndex].classList.remove("correct");
+            }
+            charIndex++;
+        }
+
+        charElement.forEach(span=> span.classList.remove("active"));
+        charElement[charIndex].classList.add("active");
+        //let currCPM = charIndex - mistakes;
+        //setCpm(currCPM);
+    }
+
+    function initTimer()
+    {
+        if(timeLeft > 0)
+        {
+            timeLeft--;
+            //set timer state
+            setTimer(timeLeft);
+        }
+        else
+        {
+            clearInterval(currenTimer);
+            //clear timer state
+            setTimer(0);
+        }
     }
 
     useEffect(()=>
@@ -41,7 +88,7 @@ function App()
     return (
         <>
         <div>
-            <span id="stats">Time: 10</span> <span id="stats">WPM: 60</span><span id="stats">CPM: 58</span><span id="stats">Accuracy: 97</span>
+            <span id="stats" className='time'>Time: {timer}</span> <span id="stats">WPM: 60</span><span id="stats">CPM: {cpm}</span><span id="stats">Accuracy: 97</span>
         </div>
         <div className="quoteContainer">
 
@@ -51,6 +98,9 @@ function App()
         </div>
         <div>
             <input type='text' onChange={(e)=>handleInputOnChange(e)}></input>
+        </div>
+        <div>
+            <button>Try Again</button>
         </div>
         </>
     )
