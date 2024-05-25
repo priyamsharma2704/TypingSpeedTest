@@ -4,7 +4,7 @@ import './App.css'
 function App()
 {
     const[quote,setQuote] = useState("");
-    
+    let charIndex = 0;
     async function getQuote()
     {
         const resp = await fetch('https://api.quotable.io/random');
@@ -16,6 +16,21 @@ function App()
     function handleInputOnChange(e)
     {
         console.log(e.target.value);
+        var quotesArray = quote.split("");
+        var typedChar = e.target.value.split("")[charIndex];
+        let charElement = document.querySelectorAll('[id=id_char]');
+        if(typedChar == quotesArray[charIndex])
+        {
+            console.log("correct");
+            charElement[charIndex].classList.add("correct");
+            charElement[charIndex].classList.remove("incorrect");
+        }
+        else{
+            console.log("incorrect");
+            charElement[charIndex].classList.add("incorrect");
+            charElement[charIndex].classList.remove("correct");
+        }
+        charIndex++;
     }
 
     useEffect(()=>
@@ -31,7 +46,7 @@ function App()
         <div className="quoteContainer">
 
             {quote.split('').map( (char, index) => (
-                <span key={index}>{char}</span>
+                <span id='id_char' key={index}>{char}</span>
             ))}
         </div>
         <div>

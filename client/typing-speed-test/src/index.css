@@ -78,3 +78,16 @@ button:focus-visible {
 {
   margin: 20px
 }
+
+.correct
+{
+  color:#56964f;
+}
+
+.incorrect
+{
+  color:#cb3439;
+  background: #ffc0cb;
+  outline: 1pxsolid #fff;
+
+}
